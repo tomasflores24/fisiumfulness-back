@@ -8,6 +8,7 @@ const blogRouter = require('./routes/blogRoutes');
 const typeRouter = require('./routes/typeRoutes');
 const commentRouter = require('./routes/commentRoutes');
 const loginRouter = require('./routes/loginRoutes');
+const productRouter = require('./routes/productRoutes')
 
 const app = express();
 app.use(
@@ -27,6 +28,7 @@ app.use('/blogs', blogRouter);
 app.use('/types', typeRouter);
 app.use('/comments', commentRouter);
 app.use('/login', loginRouter);
+app.use('/products', productRouter)
 
 require('./db');
 module.exports = app;

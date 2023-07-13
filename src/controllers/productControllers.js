@@ -56,15 +56,18 @@ exports.getAllProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   const id = req.params.id;
-  const { name, price, stock, category, description } = req.body;
+  const { name, price, stock, category, description, id_image } = req.body;
   try {
     const newImageUrl = req.file.path;
-    const { id_image } = await Product.findById(id);
+    const nameImageDelete = req.file.filename;
     await cloudinary.uploader.destroy(id_image);
 
     const { public_id, url } = await cloudinary.uploader.upload(newImageUrl, {
       ...productsUploadOptions,
     });
+    const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+    await fs.promises.unlink(routeImageDelete);
+
     const newData = {
       name,
       price,
@@ -80,6 +83,7 @@ exports.updateProduct = async (req, res) => {
 
     return res.status(200).json({ message: 'Product has been updated' });
   } catch (error) {
+    console.log({ error });
     return res.status(400).json({ message: error.message });
   }
 };

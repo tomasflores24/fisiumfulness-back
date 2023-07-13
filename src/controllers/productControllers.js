@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Product = require('../models/Product');
 const {
   cloudinary,
@@ -7,6 +8,7 @@ const {
 exports.createProduct = async (req, res) => {
   const { name, price, stock, category, description } = req.body;
   const newImage = req.file.path;
+  const nameImageDelete = req.file.filename;
   try {
     const { public_id, url } = await cloudinary.uploader.upload(
       newImage,
@@ -21,6 +23,10 @@ exports.createProduct = async (req, res) => {
       image: url,
       id_image: public_id,
     };
+
+    const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+    await fs.promises.unlink(routeImageDelete);
+
     const product = new Product(newProduct);
     await product.save();
 

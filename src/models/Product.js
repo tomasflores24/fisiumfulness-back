@@ -22,6 +22,10 @@ const Product = new Schema(
       type: String,
       required: true,
     },
+    id_image: {
+      type: String,
+      required: true,
+    },
     stock: {
       type: Number,
       required: true,

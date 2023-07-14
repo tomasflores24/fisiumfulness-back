@@ -1,10 +1,29 @@
+const fs = require('fs');
+const { blogsUploadOptions, cloudinary } = require('../config/cloudinaryConfig');
 const Blog = require('../models/Blog');
 
 exports.createBlog = async (req, res) => {
-  const { text, title, image, user_id, status, type_id } = req.body;
-  const newBlog = { text, title, image, user_id, status, type_id };
+  const { text, title, user_id, type_id } = req.body;
 
   try {
+    const newImage = req.file.path;
+    const nameImageDelete = req.file.filename;
+    const { public_id, url } = await cloudinary.uploader.upload(
+      newImage,
+      blogsUploadOptions
+    );
+
+    const newBlog = {
+      text,
+      title,
+      user_id,
+      type_id,
+      image: url,
+      id_image: public_id,
+    };
+    const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+    await fs.promises.unlink(routeImageDelete);
+
     const blog = new Blog(newBlog);
     await blog.save();
     return res.status(200).json({ blog });
@@ -31,9 +50,39 @@ exports.getAllBlog = async (req, res) => {
 };
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
-  const { text, title, image, user_id, status, type_id } = req.body;
-  const newData = { text, title, image, user_id, status, type_id };
+  const { text, title, image, user_id, status, type_id, id_image } = req.body;
   try {
+    const hasFile = !!req.file;
+    let newImage = undefined;
+    let newIdImage = undefined;
+
+    if (hasFile) {
+      const newImageUrl = req.file.path;
+      const nameImageDelete = req.file.filename;
+
+      await cloudinary.uploader.destroy(id_image);
+      const { public_id, url } = await cloudinary.uploader.upload(
+        newImageUrl,
+        blogsUploadOptions
+      );
+
+      const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+      await fs.promises.unlink(routeImageDelete);
+      newImage = url;
+      newIdImage = public_id;
+    }
+
+    const newData = {
+      text,
+      title,
+      image,
+      user_id,
+      status,
+      type_id,
+      image: newImage,
+      id_image: newIdImage,
+    };
+
     const condition = await Blog.findByIdAndUpdate({ _id: id }, newData);
     if (!condition) throw new Error('blog not found');
     return res.status(200).json({ message: 'Blog has been updated' });

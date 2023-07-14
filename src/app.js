@@ -8,18 +8,12 @@ const blogRouter = require('./routes/blogRoutes');
 const typeRouter = require('./routes/typeRoutes');
 const commentRouter = require('./routes/commentRoutes');
 const loginRouter = require('./routes/loginRoutes');
-const productRouter = require('./routes/productRoutes')
+const productRouter = require('./routes/productRoutes');
+const { optionCors } = require('./config/corsConfig');
 
 const app = express();
-app.use(
-  cors({
-    // origin: 'http://localhost:5173',
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  })
-);
+
+app.use(cors(optionCors));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
@@ -28,7 +22,7 @@ app.use('/blogs', blogRouter);
 app.use('/types', typeRouter);
 app.use('/comments', commentRouter);
 app.use('/login', loginRouter);
-app.use('/products', productRouter)
+app.use('/products', productRouter);
 
 require('./db');
-module.exports = app;
+module.exports = { app };

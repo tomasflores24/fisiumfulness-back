@@ -1,3 +1,5 @@
+const fs = require('fs');
+const { cloudinary, userUploadOptions } = require('../config/cloudinaryConfig');
 const User = require('../models/User');
 
 exports.createUser = async (req, res) => {
@@ -5,31 +7,37 @@ exports.createUser = async (req, res) => {
     email,
     firstname,
     lastname,
-    status,
     password,
     username,
-    role,
-    token,
-    confirm,
     phone,
     latitud,
     longitud,
   } = req.body;
-  const newData = {
-    email,
-    firstname,
-    lastname,
-    status,
-    password,
-    username,
-    role,
-    token,
-    confirm,
-    phone,
-    latitud,
-    longitud,
-  };
+
   try {
+    const newImage = req.file.path;
+    const nameImageDelete = req.file.filename;
+    const { public_id, url } = await cloudinary.uploader.upload(
+      newImage,
+      userUploadOptions
+    );
+
+    const newData = {
+      email,
+      firstname,
+      lastname,
+      password,
+      username,
+      phone,
+      latitud,
+      longitud,
+      image: url,
+      id_image: public_id,
+    };
+
+    const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+    await fs.promises.unlink(routeImageDelete);
+
     const user = new User(newData);
     await user.save();
     return res.status(200).json({ user });
@@ -59,31 +67,46 @@ exports.updateUser = async (req, res) => {
     email,
     firstname,
     lastname,
-    status,
     password,
     username,
-    role,
-    token,
-    confirm,
     phone,
     latitud,
     longitud,
+    id_image,
   } = req.body;
-  const newData = {
-    email,
-    firstname,
-    lastname,
-    status,
-    password,
-    username,
-    role,
-    token,
-    confirm,
-    phone,
-    latitud,
-    longitud,
-  };
+
   try {
+    const hasFile = !!req.file;
+    let newImage = undefined;
+    let newIdImage = undefined;
+
+    if (hasFile) {
+      const newImageUrl = req.file.path;
+      const nameImageDelete = req.file.filename;
+
+      await cloudinary.uploader.destroy(id_image);
+      const { public_id, url } = await cloudinary.uploader.upload(
+        newImageUrl,
+        userUploadOptions
+      );
+      const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+      await fs.promises.unlink(routeImageDelete);
+      newImage = url;
+      newIdImage = public_id;
+    }
+
+    const newData = {
+      email,
+      firstname,
+      lastname,
+      password,
+      username,
+      phone,
+      latitud,
+      longitud,
+      image: newImage,
+      id_image: newIdImage,
+    };
     await User.findByIdAndUpdate({ _id: id }, newData);
     return res.status(200).json({ message: 'User has been updated' });
   } catch (error) {

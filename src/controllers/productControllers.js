@@ -7,9 +7,9 @@ const {
 
 exports.createProduct = async (req, res) => {
   const { name, price, stock, category, description } = req.body;
-  const newImage = req.file.path;
-  const nameImageDelete = req.file.filename;
   try {
+    const newImage = req.file.path;
+    const nameImageDelete = req.file.filename;
     const { public_id, url } = await cloudinary.uploader.upload(
       newImage,
       productsUploadOptions
@@ -58,15 +58,23 @@ exports.updateProduct = async (req, res) => {
   const id = req.params.id;
   const { name, price, stock, category, description, id_image } = req.body;
   try {
-    const newImageUrl = req.file.path;
-    const nameImageDelete = req.file.filename;
-    await cloudinary.uploader.destroy(id_image);
+    const hasFile = !!req.file;
+    let newImage = undefined;
+    let newIdImage = undefined;
 
-    const { public_id, url } = await cloudinary.uploader.upload(newImageUrl, {
-      ...productsUploadOptions,
-    });
-    const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
-    await fs.promises.unlink(routeImageDelete);
+    if (hasFile) {
+      const newImageUrl = req.file.path;
+      const nameImageDelete = req.file.filename;
+      await cloudinary.uploader.destroy(id_image);
+
+      const { public_id, url } = await cloudinary.uploader.upload(newImageUrl, {
+        ...productsUploadOptions,
+      });
+      const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+      await fs.promises.unlink(routeImageDelete);
+      newImage = url;
+      newIdImage = public_id;
+    }
 
     const newData = {
       name,
@@ -74,8 +82,8 @@ exports.updateProduct = async (req, res) => {
       stock,
       category,
       description,
-      image: url,
-      id_image: public_id,
+      image: newImage,
+      id_image: newIdImage,
     };
 
     const condition = await Product.findByIdAndUpdate({ _id: id }, newData);
@@ -83,7 +91,6 @@ exports.updateProduct = async (req, res) => {
 
     return res.status(200).json({ message: 'Product has been updated' });
   } catch (error) {
-    console.log({ error });
     return res.status(400).json({ message: error.message });
   }
 };

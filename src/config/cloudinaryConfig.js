@@ -8,22 +8,31 @@ cloudinary.config(cloudinaryCredentials);
 
 const FOLDER_PRODUCTS = 'FisiumFulness/products';
 const FOLDER_BLOGS = 'FisiumFulness/blogs';
+const FOLDER_USERS = 'FisiumFulness/users';
 
-const productsUploadOptions = {
+const uploadOptions = {
   resource_type: 'image',
   use_filename: true,
   unique_filename: false,
   overwrite: true,
+};
+
+const productsUploadOptions = {
+  ...uploadOptions,
   tags: ['product'],
   folder: FOLDER_PRODUCTS,
 };
+
 const blogsUploadOptions = {
-  resource_type: 'image',
-  use_filename: true,
-  unique_filename: false,
-  overwrite: true,
+  ...uploadOptions,
   tags: ['blog'],
   folder: FOLDER_BLOGS,
+};
+
+const userUploadOptions = {
+  ...uploadOptions,
+  tags: ['user'],
+  folder: FOLDER_USERS,
 };
 
 module.exports = {
@@ -31,4 +40,5 @@ module.exports = {
   cloudinaryCredentials,
   productsUploadOptions,
   blogsUploadOptions,
+  userUploadOptions,
 };

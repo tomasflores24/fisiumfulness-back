@@ -90,11 +90,16 @@ exports.updateBlog = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-exports.deleteBlog = async (req, res) => {
+exports.statusBlog = async (req, res) => {
   const { id } = req.params;
+  const {status} = req.body
+  
   try {
-    const isRemovedCorrect = await Blog.findOneAndRemove({ _id: id });
-    if (!isRemovedCorrect) throw new Error('the blog does not exist');
+    const blog = await Blog.findById(id );
+    if (!blog) throw new Error('the blog does not exist');
+
+    blog.status = status
+    await blog.save()
 
     return res
       .status(200)

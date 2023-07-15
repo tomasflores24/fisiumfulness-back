@@ -4,7 +4,7 @@ const {
   getAllProduct,
   getProductDetail,
   updateProduct,
-  deleteProduct,
+  statusProduct,
 } = require('../controllers/productControllers');
 const { adminAuthMiddleware } = require('../middleware/adminMiddleware');
 const { upload } = require('../config/multerConfig');
@@ -15,6 +15,6 @@ router.post('/create', upload, createProduct);
 router.get('/', getAllProduct);
 router.get('/detail/:id', getProductDetail);
 router.put('/update/:id', upload, updateProduct);
-router.delete('/delete/:id', deleteProduct);
+router.patch('/status/:id', statusProduct);
 
 module.exports = router;

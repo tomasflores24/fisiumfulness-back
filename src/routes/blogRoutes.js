@@ -4,7 +4,7 @@ const {
   getAllBlog,
   getBlogDetail,
   updateBlog,
-  deleteBlog,
+  statusBlog,
 } = require('../controllers/blogController.js');
 const { upload } = require('../config/multerConfig.js');
 
@@ -14,6 +14,6 @@ router.post('/create', upload, createBlog);
 router.get('/', getAllBlog);
 router.get('/detail/:id', getBlogDetail);
 router.put('/update/:id', upload, updateBlog);
-router.delete('/delete/:id', deleteBlog);
+router.patch('/status/:id', statusBlog);
 
 module.exports = router;

@@ -113,10 +113,16 @@ exports.updateUser = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-exports.deleteUser = async (req, res) => {
+exports.statusUser = async (req, res) => {
   const id = req.params.id;
+  const {status} = req.body
+
   try {
-    await User.findOneAndRemove({ _id: id });
+    const user = await User.findById({ id });
+    if (!user) throw new Error('the blog does not exist');
+
+    user.status = status
+    await user.save()
 
     return res.status(200).json({ message: 'User has been deleted' });
   } catch (error) {

@@ -95,11 +95,15 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-exports.deleteProduct = async (req, res) => {
+exports.statusProduct = async (req, res) => {
   const { id } = req.params;
+  const {status} = req.body
   try {
-    const isRemovedCorrect = await Product.findOneAndRemove({ _id: id });
-    if (!isRemovedCorrect) throw new Error('the product does not exist');
+    const product = await Product.findById(id);
+    if (!product) throw new Error('the product does not exist');
+
+    product.status = status
+    await product.save()
 
     return res
       .status(200)

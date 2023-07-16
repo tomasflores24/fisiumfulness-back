@@ -28,7 +28,7 @@ const Blog = new Schema(
     },
     user_id: {
       type: String,
-      required: true,
+      // required: true,
     },
     status: {
       type: Boolean,
@@ -38,6 +38,10 @@ const Blog = new Schema(
       type: String,
       required: true,
     },
+    createBy: {
+      type: String,
+      required: true
+    }
   },
   { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }
 );

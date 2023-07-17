@@ -4,7 +4,7 @@ const {
   getUser,
   getDetail,
   updateUser,
-  deleteUser,
+  statusUser,
 } = require('../controllers/userController');
 const { upload } = require('../config/multerConfig');
 
@@ -14,6 +14,6 @@ router.post('/create', upload, createUser);
 router.get('/', getUser);
 router.get('/detail/:id', getDetail);
 router.put('/update/:id', upload, updateUser);
-router.delete('/delete/:id', deleteUser);
+router.patch('/status/:id', statusUser);
 
 module.exports = router;

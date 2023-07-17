@@ -3,7 +3,7 @@ const { blogsUploadOptions, cloudinary } = require('../config/cloudinaryConfig')
 const Blog = require('../models/Blog');
 
 exports.createBlog = async (req, res) => {
-  const { text, title, user_id, type_id } = req.body;
+  const { text, title, type_id, createBy } = req.body;
 
   try {
     const newImage = req.file.path;
@@ -16,8 +16,8 @@ exports.createBlog = async (req, res) => {
     const newBlog = {
       text,
       title,
-      user_id,
       type_id,
+      createBy,
       image: url,
       id_image: public_id,
     };
@@ -50,7 +50,7 @@ exports.getAllBlog = async (req, res) => {
 };
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
-  const { text, title, image, user_id, status, type_id, id_image } = req.body;
+  const { text, title, image, status, type_id, createBy, id_image } = req.body;
   try {
     const hasFile = !!req.file;
     let newImage = undefined;
@@ -76,7 +76,7 @@ exports.updateBlog = async (req, res) => {
       text,
       title,
       image,
-      user_id,
+      createBy,
       status,
       type_id,
       image: newImage,
@@ -90,11 +90,16 @@ exports.updateBlog = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-exports.deleteBlog = async (req, res) => {
+exports.statusBlog = async (req, res) => {
   const { id } = req.params;
+  const {status} = req.body
+  
   try {
-    const isRemovedCorrect = await Blog.findOneAndRemove({ _id: id });
-    if (!isRemovedCorrect) throw new Error('the blog does not exist');
+    const blog = await Blog.findById(id );
+    if (!blog) throw new Error('the blog does not exist');
+
+    blog.status = status
+    await blog.save()
 
     return res
       .status(200)

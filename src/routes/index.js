@@ -5,4 +5,5 @@ module.exports = {
   commentRouter: require('./commentRoutes.js'),
   registerRouter: require('./registerRoutes.js'),
   productRouter: require('./productRoutes.js'),
+  categoryRouter: require('./categoryRoutes.js')
 };

@@ -50,7 +50,7 @@ exports.getAllBlog = async (req, res) => {
 };
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
-  const { text, title, image, status, type_id, createBy, id_image } = req.body;
+  const { text, title, type_id, createBy, id_image } = req.body;
   try {
     const hasFile = !!req.file;
     let newImage = undefined;
@@ -75,9 +75,8 @@ exports.updateBlog = async (req, res) => {
     const newData = {
       text,
       title,
-      image,
+      // image,
       createBy,
-      status,
       type_id,
       image: newImage,
       id_image: newIdImage,

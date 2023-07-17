@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const ObjectId = mongoose.Types.ObjectId;
+const dotenv = require('dotenv');
+dotenv.config();
+
+const { URL_PROFILE_DEFAULT } = process.env;
 
 const User = new Schema(
   {
@@ -64,11 +68,11 @@ const User = new Schema(
     },
     image: {
       type: String,
-      required: true,
+      default: URL_PROFILE_DEFAULT,
     },
     id_image: {
       type: String,
-      required: true,
+      default: 'does not have image id',
     },
   },
   { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }

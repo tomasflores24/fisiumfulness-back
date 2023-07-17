@@ -29,6 +29,9 @@ exports.createUser = async (req, res) => {
 
       urlImage = url;
       public_id_prueba = public_id;
+
+      const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+      await fs.promises.unlink(routeImageDelete);
     }
 
     const newData = {
@@ -43,11 +46,6 @@ exports.createUser = async (req, res) => {
       image: urlImage,
       id_image: public_id_prueba,
     };
-
-    if (hasFile) {
-      const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
-      await fs.promises.unlink(routeImageDelete);
-    }
 
     const user = new User(newData);
     await user.save();

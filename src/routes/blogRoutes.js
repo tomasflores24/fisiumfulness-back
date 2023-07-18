@@ -5,15 +5,19 @@ const {
   getBlogDetail,
   updateBlog,
   statusBlog,
+  deleteBlog
 } = require('../controllers/blogController.js');
 const { upload } = require('../config/multerConfig.js');
+const { adminAuthMiddleware } = require('../middleware/adminMiddleware.js');
 
 const router = Router();
 
-router.post('/create', upload, createBlog);
+router.post('/create', adminAuthMiddleware, upload, createBlog);
 router.get('/', getAllBlog);
 router.get('/detail/:id', getBlogDetail);
-router.put('/update/:id', upload, updateBlog);
-router.patch('/status/:id', statusBlog);
+router.put('/update/:id', adminAuthMiddleware, upload, updateBlog);
+router.patch('/status/:id', adminAuthMiddleware, statusBlog);
+
+router.delete('/delete/:id', adminAuthMiddleware, deleteBlog);
 
 module.exports = router;

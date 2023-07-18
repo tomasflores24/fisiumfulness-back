@@ -91,14 +91,14 @@ exports.updateBlog = async (req, res) => {
 };
 exports.statusBlog = async (req, res) => {
   const { id } = req.params;
-  const {status} = req.body
-  
+  const { status } = req.body;
+
   try {
-    const blog = await Blog.findById(id );
+    const blog = await Blog.findById(id);
     if (!blog) throw new Error('the blog does not exist');
 
-    blog.status = status
-    await blog.save()
+    blog.status = status;
+    await blog.save();
 
     return res
       .status(200)
@@ -114,6 +114,19 @@ exports.getBlogDetail = async (req, res) => {
     if (!blog) throw new Error('Blog not found');
 
     return res.status(200).json({ blog });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteBlog = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const blog = await Blog.findByIdAndDelete(id);
+    if (!blog) throw new Error('the blog does not exist');
+
+    return res.status(200).json({ message: 'blog has been deleted' });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

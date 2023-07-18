@@ -12,6 +12,7 @@ exports.createUser = async (req, res) => {
     phone,
     latitud,
     longitud,
+    role,
   } = req.body;
 
   try {
@@ -43,6 +44,7 @@ exports.createUser = async (req, res) => {
       phone,
       latitud,
       longitud,
+      role,
       image: urlImage,
       id_image: public_id_prueba,
     };

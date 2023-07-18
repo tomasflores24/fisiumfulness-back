@@ -1,9 +1,9 @@
 const adminAuthMiddleware = (req, res, next) => {
-  const user = req.body.user;
-  console.log({ user });
-  if (!user || user.role !== 'admin') {
+  const roleUser = req.headers.authorization;
+  console.log({ roleUser });
+
+  if (roleUser !== 'admin')
     return res.status(401).json({ message: 'Unauthorized access' });
-  }
 
   next();
 };

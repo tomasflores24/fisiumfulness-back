@@ -6,6 +6,7 @@ const {
   updateProduct,
   statusProduct,
   deleteProduct,
+  getProductRemodev
 } = require('../controllers/productControllers');
 const { adminAuthMiddleware } = require('../middleware/adminMiddleware');
 const { upload } = require('../config/multerConfig');
@@ -19,5 +20,7 @@ router.put('/update/:id', adminAuthMiddleware, upload, updateProduct);
 router.patch('/status/:id', adminAuthMiddleware, statusProduct);
 
 router.delete('/delete/:id', adminAuthMiddleware, deleteProduct);
+router.get('/removed', getProductRemodev);
+
 
 module.exports = router;

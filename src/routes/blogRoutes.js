@@ -5,7 +5,8 @@ const {
   getBlogDetail,
   updateBlog,
   statusBlog,
-  deleteBlog
+  deleteBlog,
+  getBlogRemodev
 } = require('../controllers/blogController.js');
 const { upload } = require('../config/multerConfig.js');
 const { adminAuthMiddleware } = require('../middleware/adminMiddleware.js');
@@ -19,5 +20,7 @@ router.put('/update/:id', adminAuthMiddleware, upload, updateBlog);
 router.patch('/status/:id', adminAuthMiddleware, statusBlog);
 
 router.delete('/delete/:id', adminAuthMiddleware, deleteBlog);
+router.get('/removed', getBlogRemodev);
+
 
 module.exports = router;

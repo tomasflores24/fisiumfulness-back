@@ -1,8 +1,8 @@
 const Comment = require('../models/Comment');
 
 exports.createComment = async (req, res) => {
-  const { user_id, content, user_email, user_name, blog_id, status } = req.body;
-  const newData = { user_id, content, user_email, user_name, blog_id, status };
+  const { user_id, content, user_email, user_name, blog_id } = req.body;
+  const newData = { user_id, content, user_email, user_name, blog_id };
   try {
     const comment = new Comment(newData);
     await comment.save();
@@ -22,6 +22,29 @@ exports.getComment = async (req, res) => {
       throw new Error('The comment with that ID was not found');
 
     return res.status(200).json({ commentFilter });
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
+  }
+};
+
+exports.getCommentBlog = async (req, res) => {
+  const blog_id = req.params.id;
+  try {
+    const comments = await Comment.find({ blog_id });
+
+    return res.status(200).json({ comments });
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
+  }
+};
+
+exports.deleteComment = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const comment = await Comment.findByIdAndDelete(id);
+    if (!comment) throw new Error('the comment does not exist');
+
+    return res.status(200).json({ message: `Comment ${id} deleted` });
   } catch (error) {
     return res.status(404).json({ message: error.message });
   }

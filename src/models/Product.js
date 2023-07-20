@@ -42,6 +42,10 @@ const Product = new Schema(
       type: String,
       required: true,
     },
+    amount: {
+      type: Number,
+      default: 1
+    }
   },
   { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }
 );

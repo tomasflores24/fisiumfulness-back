@@ -129,7 +129,7 @@ exports.statusUser = async (req, res) => {
   const { status } = req.body;
 
   try {
-    const user = await User.findById({ id });
+    const user = await User.findById( id );
     if (!user) throw new Error('the blog does not exist');
 
     user.status = status;

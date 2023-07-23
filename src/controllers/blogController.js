@@ -34,7 +34,7 @@ exports.createBlog = async (req, res) => {
 exports.getAllBlog = async (req, res) => {
   const { title } = req.query;
   try {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({ status: true });
 
     if (!title) return res.status(200).json({ blogs });
 
@@ -50,7 +50,7 @@ exports.getAllBlog = async (req, res) => {
 };
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
-  const { text, title, image, status, type_id, createBy, id_image } = req.body;
+  const { text, title, type_id, createBy, id_image } = req.body;
   try {
     const hasFile = !!req.file;
     let newImage = undefined;
@@ -75,9 +75,8 @@ exports.updateBlog = async (req, res) => {
     const newData = {
       text,
       title,
-      image,
+      // image,
       createBy,
-      status,
       type_id,
       image: newImage,
       id_image: newIdImage,
@@ -92,14 +91,14 @@ exports.updateBlog = async (req, res) => {
 };
 exports.statusBlog = async (req, res) => {
   const { id } = req.params;
-  const {status} = req.body
-  
+  const { status } = req.body;
+
   try {
-    const blog = await Blog.findById(id );
+    const blog = await Blog.findById(id);
     if (!blog) throw new Error('the blog does not exist');
 
-    blog.status = status
-    await blog.save()
+    blog.status = status;
+    await blog.save();
 
     return res
       .status(200)
@@ -112,10 +111,33 @@ exports.getBlogDetail = async (req, res) => {
   const { id } = req.params;
   try {
     const blog = await Blog.findById(id);
-    if (!blog) throw new Error('Blog not found');
+    if (!blog || blog.status === false) throw new Error('Blog not found');
 
     return res.status(200).json({ blog });
   } catch (error) {
     return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteBlog = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const blog = await Blog.findByIdAndDelete(id);
+    if (!blog) throw new Error('the blog does not exist');
+
+    return res.status(200).json({ message: 'blog has been deleted' });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.getBlogRemodev = async (req, res) => {
+  try {
+    const blogRemoved = await Blog.find({ status: false });
+
+    return res.status(200).json({ blogRemoved });
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
   }
 };

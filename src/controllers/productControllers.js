@@ -39,7 +39,7 @@ exports.createProduct = async (req, res) => {
 exports.getAllProduct = async (req, res) => {
   const { title } = req.query;
   try {
-    const products = await Product.find({});
+    const products = await Product.find({ status: true });
 
     if (!title) return res.status(200).json({ products });
 
@@ -97,13 +97,13 @@ exports.updateProduct = async (req, res) => {
 
 exports.statusProduct = async (req, res) => {
   const { id } = req.params;
-  const {status} = req.body
+  const { status } = req.body;
   try {
     const product = await Product.findById(id);
     if (!product) throw new Error('the product does not exist');
 
-    product.status = status
-    await product.save()
+    product.status = status;
+    await product.save();
 
     return res
       .status(200)
@@ -117,10 +117,34 @@ exports.getProductDetail = async (req, res) => {
   const { id } = req.params;
   try {
     const product = await Product.findById(id);
-    if (!product) throw new Error('Product not found');
+    if (!product || product.status === false) throw new Error('Product not found');
 
     return res.status(200).json({ product });
   } catch (error) {
     return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await Product.findByIdAndDelete(id);
+    if (!product) throw new Error('the product does not exist');
+
+    return res
+      .status(200)
+      .json({ message: `the product with id ${id} has been removed` });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.getProductRemodev = async (req, res) => {
+  try {
+    const productsRemoved = await Product.find({ status: false });
+
+    return res.status(200).json({ productsRemoved });
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
   }
 };

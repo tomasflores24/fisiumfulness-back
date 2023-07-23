@@ -7,7 +7,7 @@ const {
   statusBlog,
 } = require('../controllers/blogController.js');
 const { upload } = require('../config/multerConfig.js');
-
+const authAll = require('../middleware/authAll');
 const router = Router();
 
 router.post('/create', upload, createBlog);

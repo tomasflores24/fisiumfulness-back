@@ -8,6 +8,8 @@ const E_HOST = process.env.MAILHOST;
 const E_PORT = process.env.MAILPORT;
 const E_USER = process.env.MAILUSER;
 const E_PASSWORD = process.env.MAILPASSWORD;
+require("dotenv").config();
+const JWT_secret = process.env.JWT_secret;
 
 // exports.login = async (req, res) => {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -63,11 +65,11 @@ const E_PASSWORD = process.env.MAILPASSWORD;
 exports.login = async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*")
   const { email, password, username } = req.body;
-  console.log("req.body: ", req.body)
   try {
     const user = await User.findOne({email, password, username});
     if (user) {
-      return res.status(200).json(user);
+      const token = jwt.sign({ userId: user._id, role: user.role }, JWT_secret, { expiresIn: '1h' });
+      return res.status(200).json({user, token});
     } else {
       return res.status(401).json({ message: 'Usuario no encontrado' });
     }

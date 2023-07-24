@@ -34,14 +34,18 @@ const Blog = new Schema(
       type: Boolean,
       default: true,
     },
+    // type_id: {
+    //   type: String,
+    //   required: true,
+    // },
     type_id: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Type',
     },
     createBy: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }
 );

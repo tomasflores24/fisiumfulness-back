@@ -34,7 +34,7 @@ exports.createBlog = async (req, res) => {
 exports.getAllBlog = async (req, res) => {
   const { title } = req.query;
   try {
-    const blogs = await Blog.find({ status: true });
+    const blogs = await Blog.find({ status: true }).populate('type_id', 'name');
 
     if (!title) return res.status(200).json({ blogs });
 
@@ -110,9 +110,9 @@ exports.statusBlog = async (req, res) => {
 exports.getBlogDetail = async (req, res) => {
   const { id } = req.params;
   try {
-    const blog = await Blog.findById(id);
+    const blog = await Blog.findById(id).populate('type_id', 'name');
     if (!blog || blog.status === false) throw new Error('Blog not found');
-
+    console.log("ENTRY", {blog})
     return res.status(200).json({ blog });
   } catch (error) {
     return res.status(400).json({ message: error.message });

@@ -34,12 +34,8 @@ const Blog = new Schema(
       type: Boolean,
       default: true,
     },
-    // type_id: {
-    //   type: String,
-    //   required: true,
-    // },
     type_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: ObjectId,
       ref: 'Type',
     },
     createBy: {

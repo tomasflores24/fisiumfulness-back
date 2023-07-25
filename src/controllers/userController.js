@@ -159,6 +159,7 @@ exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(id);
     if (!user) throw new Error('the user does not exist');
+    await cloudinary.uploader.destroy(user.id_image);
 
     return res.status(200).json({ message: 'User has been deleted' });
   } catch (error) {

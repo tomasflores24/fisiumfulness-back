@@ -34,7 +34,7 @@ exports.createBlog = async (req, res) => {
 exports.getAllBlog = async (req, res) => {
   const { title } = req.query;
   try {
-    const blogs = await Blog.find({ status: true }).populate('type_id', 'name');
+    const blogs = await Blog.find({ status: true }).populate('type_id');
 
     if (!title) return res.status(200).json({ blogs });
 
@@ -51,6 +51,7 @@ exports.getAllBlog = async (req, res) => {
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
   const { text, title, type_id, createBy, id_image } = req.body;
+  console.log({ type_id });
   try {
     const hasFile = !!req.file;
     let newImage = undefined;

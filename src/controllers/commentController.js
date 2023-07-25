@@ -1,8 +1,8 @@
 const Comment = require('../models/Comment');
 
 exports.createComment = async (req, res) => {
-  const { user_id, content, user_email, user_name, blog_id } = req.body;
-  const newData = { user_id, content, user_email, user_name, blog_id };
+  const { user_id, content, blog_id } = req.body;
+  const newData = { user_id, content, blog_id };
   try {
     const comment = new Comment(newData);
     await comment.save();
@@ -14,7 +14,8 @@ exports.createComment = async (req, res) => {
 exports.getComment = async (req, res) => {
   const { blog_id } = req.query;
   try {
-    const comments = await Comment.find({});
+    const propertiesUser = 'username image firstname lastname';
+    const comments = await Comment.find().populate('user_id', propertiesUser);
 
     if (!blog_id) return res.status(200).json({ comments });
     const commentFilter = comments.filter((comment) => comment.blog_id === blog_id);
@@ -30,7 +31,8 @@ exports.getComment = async (req, res) => {
 exports.getCommentBlog = async (req, res) => {
   const blog_id = req.params.id;
   try {
-    const comments = await Comment.find({ blog_id });
+    const propertiesUser = 'username image firstname lastname';
+    const comments = await Comment.find({ blog_id }).populate('user_id', propertiesUser);
 
     return res.status(200).json({ comments });
   } catch (error) {

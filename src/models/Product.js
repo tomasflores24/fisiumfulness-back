@@ -35,8 +35,8 @@ const Product = new Schema(
       default: true,
     },
     category: {
-      type: String,
-      required: true,
+      type: ObjectId,
+      ref: 'Category',
     },
     description: {
       type: String,

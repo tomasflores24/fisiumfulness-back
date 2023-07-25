@@ -39,7 +39,10 @@ exports.createProduct = async (req, res) => {
 exports.getAllProduct = async (req, res) => {
   const { title } = req.query;
   try {
-    const products = await Product.find({ status: true });
+    const products = await Product.find({ status: true }).populate(
+      'category',
+      'name'
+    );
 
     if (!title) return res.status(200).json({ products });
 
@@ -116,7 +119,7 @@ exports.statusProduct = async (req, res) => {
 exports.getProductDetail = async (req, res) => {
   const { id } = req.params;
   try {
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate('category', 'name');
     if (!product || product.status === false) throw new Error('Product not found');
 
     return res.status(200).json({ product });
@@ -130,6 +133,7 @@ exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(id);
     if (!product) throw new Error('the product does not exist');
+    await cloudinary.uploader.destroy(product.id_image);
 
     return res
       .status(200)
@@ -141,7 +145,7 @@ exports.deleteProduct = async (req, res) => {
 
 exports.getProductRemodev = async (req, res) => {
   try {
-    const productsRemoved = await Product.find({ status: false });
+    const productsRemoved = await Product.find({ status: false }).populate('category','name');
 
     return res.status(200).json({ productsRemoved });
   } catch (error) {

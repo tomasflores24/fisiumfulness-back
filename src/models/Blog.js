@@ -35,13 +35,13 @@ const Blog = new Schema(
       default: true,
     },
     type_id: {
-      type: String,
-      required: true,
+      type: ObjectId,
+      ref: 'Type',
     },
     createBy: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }
 );

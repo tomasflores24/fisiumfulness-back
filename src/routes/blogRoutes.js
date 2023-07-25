@@ -9,7 +9,9 @@ const {
   getBlogRemodev
 } = require('../controllers/blogController.js');
 const { upload } = require('../config/multerConfig.js');
+/* const authAll = require('../middleware/authAll'); */
 const { adminAuthMiddleware } = require('../middleware/adminMiddleware.js');
+
 
 const router = Router();
 

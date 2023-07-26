@@ -12,7 +12,6 @@ exports.createBlog = async (req, res) => {
       newImage,
       blogsUploadOptions
     );
-
     const newBlog = {
       text,
       title,
@@ -23,11 +22,11 @@ exports.createBlog = async (req, res) => {
     };
     const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
     await fs.promises.unlink(routeImageDelete);
-
     const blog = new Blog(newBlog);
     await blog.save();
     return res.status(200).json({ blog });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 };

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
-const USER = process.env.USER;
+const os = require("os");
+const USER = os.platform() === "win32" ? process.env.USER : process.env.DB_USER;
 const SERVER = process.env.SERVER_CONN;
 const PASS = process.env.PASS;
 const DB = process.env.DB;

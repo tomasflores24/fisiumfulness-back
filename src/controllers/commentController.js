@@ -2,12 +2,21 @@ const Comment = require('../models/Comment');
 
 exports.createComment = async (req, res) => {
   const { user_id, content, blog_id } = req.body;
+  console.log({user_id, content, blog_id})
   const newData = { user_id, content, blog_id };
   try {
-    const comment = new Comment(newData);
-    await comment.save();
-    return res.status(200).json({ comment });
+    const propertiesUser = 'username image firstname lastname';
+    const newComment = new Comment(newData);
+    await newComment.save();
+    const comment = await Comment.findById(newComment.id).populate(
+      'user_id',
+      propertiesUser
+    );
+    return res
+      .status(200)
+      .json({ comment, message: 'comment created successfully' });
   } catch (error) {
+    console.log(error.message);
     return res.status(400).json({ message: error.message });
   }
 };
@@ -32,7 +41,10 @@ exports.getCommentBlog = async (req, res) => {
   const blog_id = req.params.id;
   try {
     const propertiesUser = 'username image firstname lastname';
-    const comments = await Comment.find({ blog_id }).populate('user_id', propertiesUser);
+    const comments = await Comment.find({ blog_id }).populate(
+      'user_id',
+      propertiesUser
+    );
 
     return res.status(200).json({ comments });
   } catch (error) {

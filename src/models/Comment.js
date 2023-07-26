@@ -13,7 +13,7 @@ const Comment = new Schema(
     user_id: {
       type: ObjectId,
       ref: 'User',
-      // required: true,
+      required: true,
     },
     content: {
       type: String,

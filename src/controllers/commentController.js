@@ -2,7 +2,6 @@ const Comment = require('../models/Comment');
 
 exports.createComment = async (req, res) => {
   const { user_id, content, blog_id } = req.body;
-  console.log({user_id, content, blog_id})
   const newData = { user_id, content, blog_id };
   try {
     const propertiesUser = 'username image firstname lastname';

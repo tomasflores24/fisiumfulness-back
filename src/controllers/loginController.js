@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*")
   const { email, password, username } = req.body;
   try {
-    const user = await User.findOne({email, password, username});
+    const user = await User.findOne({email, password});
     if (user) {
       const token = jwt.sign({ userId: user._id, role: user.role }, JWT_secret, { expiresIn: '1h' });
       return res.status(200).json({user, token});

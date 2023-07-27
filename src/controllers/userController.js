@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { cloudinary, userUploadOptions } = require('../config/cloudinaryConfig');
 const User = require('../models/User');
-const Comment = require('../models/Comment');
 
 exports.createUser = async (req, res) => {
   const {
@@ -130,7 +129,7 @@ exports.statusUser = async (req, res) => {
   const { status } = req.body;
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById( id );
     if (!user) throw new Error('the blog does not exist');
 
     user.status = status;
@@ -161,8 +160,6 @@ exports.deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(id);
     if (!user) throw new Error('the user does not exist');
     await cloudinary.uploader.destroy(user.id_image);
-
-    await Comment.deleteMany({ user_id: id });
 
     return res.status(200).json({ message: 'User has been deleted' });
   } catch (error) {

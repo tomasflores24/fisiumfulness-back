@@ -64,7 +64,7 @@ const JWT_secret = process.env.JWT_secret;
 
 exports.login = async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*")
-  const { email, password, username } = req.body;
+  const { email, password } = req.body;
   try {
     const user = await User.findOne({email, password });
     if (user) {

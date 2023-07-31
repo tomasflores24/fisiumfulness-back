@@ -1,21 +1,39 @@
+const fs = require('fs');
+const { blogsUploadOptions, cloudinary } = require('../config/cloudinaryConfig');
 const Blog = require('../models/Blog');
 
 exports.createBlog = async (req, res) => {
-  const { text, title, image, user_id, status, type_id } = req.body;
-  const newBlog = { text, title, image, user_id, status, type_id };
+  const { text, title, type_id, createBy } = req.body;
 
   try {
+    const newImage = req.file.path;
+    const nameImageDelete = req.file.filename;
+    const { public_id, url } = await cloudinary.uploader.upload(
+      newImage,
+      blogsUploadOptions
+    );
+    const newBlog = {
+      text,
+      title,
+      type_id,
+      createBy,
+      image: url,
+      id_image: public_id,
+    };
+    const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+    await fs.promises.unlink(routeImageDelete);
     const blog = new Blog(newBlog);
     await blog.save();
     return res.status(200).json({ blog });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 };
 exports.getAllBlog = async (req, res) => {
   const { title } = req.query;
   try {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({ status: true }).populate('type_id');
 
     if (!title) return res.status(200).json({ blogs });
 
@@ -31,9 +49,39 @@ exports.getAllBlog = async (req, res) => {
 };
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
-  const { text, title, image, user_id, status, type_id } = req.body;
-  const newData = { text, title, image, user_id, status, type_id };
+  const { text, title, type_id, createBy, id_image } = req.body;
+  console.log({ type_id });
   try {
+    const hasFile = !!req.file;
+    let newImage = undefined;
+    let newIdImage = undefined;
+
+    if (hasFile) {
+      const newImageUrl = req.file.path;
+      const nameImageDelete = req.file.filename;
+
+      await cloudinary.uploader.destroy(id_image);
+      const { public_id, url } = await cloudinary.uploader.upload(
+        newImageUrl,
+        blogsUploadOptions
+      );
+
+      const routeImageDelete = `../fisiumfulnessback/uploads/${nameImageDelete}`;
+      await fs.promises.unlink(routeImageDelete);
+      newImage = url;
+      newIdImage = public_id;
+    }
+
+    const newData = {
+      text,
+      title,
+      // image,
+      createBy,
+      type_id,
+      image: newImage,
+      id_image: newIdImage,
+    };
+
     const condition = await Blog.findByIdAndUpdate({ _id: id }, newData);
     if (!condition) throw new Error('blog not found');
     return res.status(200).json({ message: 'Blog has been updated' });
@@ -41,11 +89,16 @@ exports.updateBlog = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-exports.deleteBlog = async (req, res) => {
+exports.statusBlog = async (req, res) => {
   const { id } = req.params;
+  const { status } = req.body;
+
   try {
-    const isRemovedCorrect = await Blog.findOneAndRemove({ _id: id });
-    if (!isRemovedCorrect) throw new Error('the blog does not exist');
+    const blog = await Blog.findById(id);
+    if (!blog) throw new Error('the blog does not exist');
+
+    blog.status = status;
+    await blog.save();
 
     return res
       .status(200)
@@ -57,11 +110,35 @@ exports.deleteBlog = async (req, res) => {
 exports.getBlogDetail = async (req, res) => {
   const { id } = req.params;
   try {
-    const blog = await Blog.findById(id);
-    if (!blog) throw new Error('Blog not found');
-
+    const blog = await Blog.findById(id).populate('type_id', 'name');
+    if (!blog || blog.status === false) throw new Error('Blog not found');
+    console.log('ENTRY', { blog });
     return res.status(200).json({ blog });
   } catch (error) {
     return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.deleteBlog = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const blog = await Blog.findByIdAndDelete(id);
+    if (!blog) throw new Error('the blog does not exist');
+    await cloudinary.uploader.destroy(blog.id_image);
+
+    return res.status(200).json({ message: 'blog has been deleted' });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+exports.getBlogRemodev = async (req, res) => {
+  try {
+    const blogRemoved = await Blog.find({ status: false });
+
+    return res.status(200).json({ blogRemoved });
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
   }
 };

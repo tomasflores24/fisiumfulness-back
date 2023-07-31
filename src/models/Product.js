@@ -22,6 +22,10 @@ const Product = new Schema(
       type: String,
       required: true,
     },
+    id_image: {
+      type: String,
+      required: true,
+    },
     stock: {
       type: Number,
       required: true,
@@ -31,13 +35,17 @@ const Product = new Schema(
       default: true,
     },
     category: {
-      type: String,
-      required: true,
+      type: ObjectId,
+      ref: 'Category',
     },
     description: {
       type: String,
       required: true,
     },
+    amount: {
+      type: Number,
+      default: 1
+    }
   },
   { timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' } }
 );

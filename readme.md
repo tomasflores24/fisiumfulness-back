@@ -92,15 +92,8 @@ localhost:3000/register
 4. Delete/:id Eliminar register por id
 
 
+#
 
 
-
-
-
-
-
-
-
-
-
-
+- Los endpoints de [CREATE, UPDATE, STATUS and DELETE] solo pueden ser utilizados por usuarios administradores, por lo tanto en la cabezera habra que enviarle el role del usuario, si es "admin" entonces podra usar el endpoint, sino arrojara un error de acceso.
+Asi se leera el role desde el backend : "req.headers.authorization"

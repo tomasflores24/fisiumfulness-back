@@ -119,8 +119,7 @@ exports.statusProduct = async (req, res) => {
 exports.getProductDetail = async (req, res) => {
   const { id } = req.params;
   try {
-    const product = await Product.findById(id).populate('category', 'name');
-    if (!product || product.status === false) throw new Error('Product not found');
+    const product = await Product.findById(id)
 
     return res.status(200).json({ product });
   } catch (error) {

@@ -111,7 +111,6 @@ exports.getBlogDetail = async (req, res) => {
   const { id } = req.params;
   try {
     const blog = await Blog.findById(id).populate('type_id', 'name');
-    if (!blog || blog.status === false) throw new Error('Blog not found');
     console.log('ENTRY', { blog });
     return res.status(200).json({ blog });
   } catch (error) {
@@ -135,7 +134,7 @@ exports.deleteBlog = async (req, res) => {
 
 exports.getBlogRemodev = async (req, res) => {
   try {
-    const blogRemoved = await Blog.find({ status: false });
+    const blogRemoved = await Blog.find({ status: false }).populate('type_id', 'name');
 
     return res.status(200).json({ blogRemoved });
   } catch (error) {
